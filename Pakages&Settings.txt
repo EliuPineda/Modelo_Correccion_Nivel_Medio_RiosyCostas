@@ -1,0 +1,8 @@
+CSV Files
+	Install CSV -> using Pkg -> Pkg.add("CSV")
+
+DataFrames
+	Install DataFrames -> using Pkg -> Pkg.add("DataFrames")
+
+Plots
+	Install Plots -> using Pkg -> Pkg.add("Plots")
