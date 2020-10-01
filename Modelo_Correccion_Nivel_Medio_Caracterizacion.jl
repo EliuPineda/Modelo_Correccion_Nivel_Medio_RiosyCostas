@@ -7,12 +7,14 @@ println("###########_Bienvenido_##########")
 println("");println("")
 
 #data = CSV.read("C:\\Users\\ELIU\\Desktop\\9_Semestre\\Rios y Costas\\CNM\\DATA.csv")
+#data = CSV.read("DATA_parcial.csv")
 data = CSV.read("DATA.csv")
+#data = CSV.read("resolutionplus.csv")
 
 #Sin correccion
 plot(data.t,data.no, title="Modelo Correccion Nivel Medio", label="No Corregido", background_color = RGB(0.2, 0.2, 0.2))
 xlabel!("t(s)")
-ylabel!("n(m)")
+ylabel!("n()")
 
 #Media aritmetica
 Sumno=sum(data.no)
@@ -135,6 +137,10 @@ end
 
 # CARACTERIZACION FINAL·······························································
 function CaracterizacionSenalH(salida)
+    #Ordemar H de mayor a menor
+    sort!(salida, (order(:H, rev = true)))
+
+
     count=size(salida.Index)[1]
     #println(salida)
     #CARACTERZACION H(m)
@@ -165,7 +171,7 @@ function CaracterizacionSenalH(salida)
         end
     end
 
-    println("-","---------------------------------+++>  Caracterizacion H(m)")
+    println("-","---------------------------------+++>  Caracterizacion H")
     altura_media = suma_datos/numero_de_valores
     println("Media= ",altura_media)
     altura_media_cuadratica = ((1/numero_de_valores)*suma_datos_mediacuadratica)^(1/2)
@@ -192,6 +198,8 @@ function CaracterizacionSenalH(salida)
 end
 
 function CaracterizacionSenalT(salida)
+    sort!(salida, (order(:T, rev = true)))
+
     count=size(salida.Index)[1]
     #println(salida)
     #CARACTERZACION H(m)
@@ -318,6 +326,7 @@ function caracterizacion(data)
                         #println(data.no[indice_maximocresta])
                         salida.max_cresta[indice_maximocresta]=maximocresta
                         broker = 0                            #Reinicia broker para que en la proxima iteracion no salga de primeras con el dato anterior guardado
+                        maximocresta = 0                      #Reinicia el maximo para la proxima iteracion
                         break
                     end
                 end
@@ -345,18 +354,25 @@ function caracterizacion(data)
                 global indice_minimovalle
                 global indice_ultimo_uno
                 if minimovalle>data.no[i]                    #Encuentro el minimo de los valores
-                    minimovalle = data.no[i]
-                    indice_minimovalle = i                   #Guardo indice maximo cresta para luego ubicar el numero
+                    if i != indice_ultimo_uno                #No poemos revisar el ultimo valor pasado porque si es menor que los menores siguientes entonces ocurrirá un error porque no encontrará menores
+                        minimovalle = data.no[i]
+                        indice_minimovalle = i                   #Guardo indice maximo cresta para luego ubicar el numero
+                    end
                     #println(indice_minimovalle)
                 end
                 if salida.cruceinferior[i]==1                 #Contador para terminar iteracion cuando encuentra el segundo  1
                     broker = 1+broker                         #Encuentra un 1
                     if broker>1                               #Si  el segundo 1 ha sido contado sale del ciclo for, solo hasta este punto podemos tener los valores finales
                         indice_ultimo_uno = data.n[i]
+                        #if minimovalle >= 0          #Nuevo
+                        #    minimovalle = data.no[i]
+                        #    indice_minimovalle = i   #Nuevo
+                        #end
                         #println(indice_minimovalle)
                         #println(data.no[indice_minimovalle])
                         salida.min_valle[indice_minimovalle]=minimovalle
                         broker = 0                            #Reinicia broker para que en la proxima iteracion no salga de primeras con el dato anterior guardado
+                        minimovalle = 0                       #Reinicia el maximo para la proxima iteracion
                         break
                     end
                 end
@@ -427,9 +443,9 @@ function caracterizacion(data)
         end
     end
 
-
+    #println(salida)
     CaracterizacionSenalH(salida)   #llamar las dos funciones para caracterizacion fnal H y T
-    CaracterizacionSenalT(salida)
+    #CaracterizacionSenalT(salida)
 
 
 
@@ -437,7 +453,6 @@ function caracterizacion(data)
     println("");println("");println("")
 
 end
-
 
 
 #CARACTERIZACIONES*******
