@@ -2,6 +2,8 @@
 
 En el presente repositorio se presentan tres modelos de correccion del nivel medio:
 
+Input DeltaT = 0.5
+
 1_ Media aritmetica
 2_ Ecuacion de la recta
 3_ Ecuacion de la parabola
